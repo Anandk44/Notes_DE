@@ -1,0 +1,245 @@
+save(path) -- 
+Feature	save(path)	saveAsTable()
+Creates partitions	✅	✅
+Writes to ADLS	✅	✅
+Creates Delta log	✅	✅
+Registers table	❌	✅
+SQL access	❌	✅
+Unity Catalog support	❌	✅
+Governance/Lineage	❌	✅
+
+spark.databricks.delta.schema.autoMerge.enabled = true
+
+
+***Schema Evolution 
+1,If we do  insert and if the new column is not present in table we need to alter the table add column and then insert the data.where in databricks if we set 
+spark.databricks.delta.schema.autoMerge.enabled =  TRUE
+will allows us to automaticaly merge the new schema
+
+***copy on write
+every change , merge is going to create a new file for the changes and original parquet file is overwritten with the change made
+
+
+***merge on read 
+.the original parquet file is untouched
+the changes are recorded in a new file in which deletion vectors are there and if you read a file and any one of the row is deleted it will skip the row.
+when the deletion vector is enabled delta uses merge on read if not copy on write is followed.
+
+for every operation(insert) parquet file is created and for update as it is delete + insert an new deletion vector file is created and also a new parquet file is created and if  we do so many operation on the table we will have small file problem. 
+
+delete - 1 deletion vector
+update(delete + insert) - 1 deletion + 1 parquet
+insert - 1 parquet
+
+copy on write -- read heavy
+merge on write --  is ideal for where we want to do frequent updates.
+
+*****shallow copy 
+1.metadata of the table is copied when we do shallow copy
+**0.json , 1.json , 2.json-------  all the json files are duplicated checkpoint.parquet to 
+version 0 
+**in location only -- _delta_log folder is available
+- cloned table maintains its own transaction any changes made in the cloned table does not reflect in source table
+we cannot travel back to versions of src tables .
+if we do vaccum on src table still the deleted files will be present as shallow cloned table reference.
+
+2.deep clone
+0.json , 1.json , 2.json-------  all the json files are duplicated checkpoint.parquet to 
+version 0
+metadta + data , takes times and consume more storage
+metadata same as shallow copy 
+data is exactly replicated.
+cloned table maintains its own transaction any changes made in the cloned table does not reflect in source table
+--if we do vaccum in src the files are deleted because both deep cloned table and src are independent copies and not cloned table is not referred.
+-- contraints , partitons all are copied in deep clone.
+
+
+****Small file problem
+1.Repartitoning to a very large extent 
+2.Partitioning on a high cardinality column 
+3.Frequently updaing dataset
+
+***optimizeWrite --
+df.write.repartition(200).mode(overwrite).partitionBy("col).option(optimizeWrite , true).save()
+ in this automatic optimize write the data is shuffled first and then written.need to keep in mind this does shuffling of data.
+ 
+ df.write.repartition(200).mode(overwrite).partitionBy("col).save() -- manual need to to optimize and vaccum for better performance.
+ 
+****Default bin size is 1 gb.
+**autocompaction -- good for frequent updates on tb1
+combining small files into 1 file - min is 3 
+tblproperties(delta.autoOptimize.autoCompact",false)
+
+spark.conf.get("spark.databricks.delta.autoComlact.minNumFiles")
+
+***ALTER TABLE name set tblproperties(delta.autoOptimize.optimizeWrite",false)
+
+*** vaccum --
+whenever we do an update or delete the records which are affected are done soft delete that means the underlying rows are still available in cloud storage so if we want to physically remove them we need to use vaccum .
+1.it will save the storage cost
+2.limit the option for time travel
+
+vaccum table 
+ 
+***ZORDER
+
+logically sort + parttion
+
+coloactes similar data in the same file.
+zorder ensure when points are reduced from multi dimensioanl space to single dimension they are placed close to each other.
+
+tradeoffs -- storge cost
+everytime we need to do optimize which is scan shuffle write.
+
+*****liquid clustering
+when we do hive style partitioning or zorder we need to specify column upfront so this is not flexible.
+and also whenever someone changes the zorder the data layout changes and rewriting data according to new filter pattern this is where liquid clustering comes allowing to change the column any time.
+1.unified file size
+2.appropriate no of files with colated data.
+** It break bigger partitions into smaller and if many small partiton are there than it will combine all in partition in that way it will create an ideal dataset.
+
+16. Changing Clustering Key
+
+Huge advantage.
+
+Partitioned table:
+
+Partitioned by Country
+
+Want:
+
+Partition by State
+
+Need:
+
+Full table rewrite
+
+Liquid Clustering:
+
+ALTER TABLE sales
+CLUSTER BY(State);
+
+No full migration.
+
+Future OPTIMIZE operations gradually reorganize data.
+
+17. Liquid Clustering + Delta Internals
+
+When querying:
+
+SELECT *
+FROM sales
+WHERE Country='USA'
+
+Delta uses:
+
+Transaction Log
++
+File Statistics
++
+Clustering Metadata
+
+to determine:
+
+Which files contain USA
+
+Only those files are scanned.
+
+
+"I have 10 TB data and 100,000 small files. After OPTIMIZE how many files will remain?"
+
+Answer:
+
+10 TB = 10,240 GB
+
+Target size ≈ 1 GB
+
+Expected files ≈ 10,240
+
+Not exact, but roughly in that range.
+WITH lag_cte AS
+(
+    SELECT *,
+           LAG(login_date) OVER
+           (
+               PARTITION BY user
+               ORDER BY login_date
+           ) AS prev_date
+    FROM logins
+),
+flag_cte AS
+(
+    SELECT *,
+           CASE
+               WHEN prev_date IS NULL THEN 1
+               WHEN DATEDIFF(day, prev_date, login_date) > 1 THEN 1
+               ELSE 0
+           END AS new_group
+    FROM lag_cte
+),
+group_cte AS
+(
+    SELECT *,
+           SUM(new_group) OVER
+           (
+               PARTITION BY user
+               ORDER BY login_date
+               ROWS UNBOUNDED PRECEDING
+           ) AS grp
+    FROM flag_cte
+)
+SELECT user,
+       MIN(login_date) AS start_date,
+       MAX(login_date) AS end_date,
+       COUNT(*) AS days
+FROM group_cte
+GROUP BY user, grp
+ORDER BY start_date;
+
+***pivot data in sql
+
+sum + case when
+select sum(case when col = then val ) as sales
+sum(case when col = value then val ) as cumi
+from table name
+group by col(on which you want to group)
+
+
+from abc import ABC, abstractmethod
+
+
+# Abstraction
+class Pipeline(ABC):
+
+    def __init__(self, file_name):
+        self.__file_name = file_name      # Encapsulation
+
+    @abstractmethod
+    def transform(self):
+        pass
+
+    def read(self):
+        print(f"Reading {self.__file_name}")
+
+
+# Inheritance
+class CustomerPipeline(Pipeline):
+
+    # Polymorphism (Method Overriding)
+    def transform(self):
+        print("Applying Customer Transformation")
+
+
+pipeline = CustomerPipeline("customer.csv")
+
+pipeline.read()
+pipeline.transform()
+
+/Workspace/Users/iswaryar@dataswitch.co/logs
+
+df.groupBy("cust").agg("count(*)").alias(
+
+***Deletion vectors
+
+whenever a file is updated , new deletion file is created and an parquet file woth the latest updates.
+It follows delete + update 

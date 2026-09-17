@@ -1,0 +1,141 @@
+AUTO-LOADER 
+Auto Loader tracks processed files”
+✅ Core Problem
+
+When ingesting files from cloud storage:
+
+New files keep arriving
+You must avoid reprocessing old files
+❌ Without tracking:
+Same file processed again → duplicates
+Manual tracking needed
+✅ Auto Loader Solution:
+
+Keeps track of which files are already processed
+
+🧩 2. “Using checkpointing and metadata logs”
+🔹 A. Checkpointing (VERY IMPORTANT)
+✅ What is checkpoint?
+
+A folder where Spark stores:
+
+Progress info
+Processed offsets
+State of streaming job
+🔹 Example:
+.option("checkpointLocation", "/chk")
+📦 What’s stored inside?
+File names processed
+Batch IDs
+Processing progress
+💡 Why important?
+
+👉 If job restarts:
+
+It does NOT reprocess old files
+Continues from last state
+🔥 Interview line:
+
+“Checkpointing ensures fault tolerance and prevents duplicate processing.”
+
+🔹 B. Metadata Logs
+
+Auto Loader also keeps internal logs:
+
+Which files were seen
+Which files were processed
+
+👉 Stored in:
+
+_checkpoint/
+💡 Think of it like:
+Processed Files List:
+file1.json ✅
+file2.json ✅
+file3.json ❌ (new)
+🧩 3. “File Notification Mode” (BEST METHOD)
+✅ What is it?
+
+Instead of scanning directory:
+
+👉 Cloud tells Databricks when new file arrives
+
+🔹 How it works:
+Example (AWS S3):
+File uploaded to S3
+S3 triggers event
+Event sent to queue (SQS)
+Auto Loader reads event
+Flow:
+New File → Cloud Event → Queue → Auto Loader → Process
+💡 Advantages:
+No directory scanning
+Faster
+Scales to millions of files
+🔥 Interview line:
+
+“File notification mode uses cloud events to detect new files efficiently without scanning directories.”
+
+🧩 4. “Directory Listing Mode”
+✅ What is it?
+
+Auto Loader:
+👉 Periodically scans folder to find new files
+
+Flow:
+Scan Folder → Compare with processed list → Pick new files
+💡 How it works internally:
+Lists all files
+Compares with metadata logs
+Picks unprocessed ones
+❌ Drawbacks:
+Slower
+Expensive for large directories
+Not scalable for millions of files
+🔥 Interview line:
+
+“Directory listing mode scans storage and compares with metadata logs to identify new files.”
+
+🧠 🔥 KEY DIFFERENCE
+Feature	File Notification	Directory Listing
+Speed	Fast ⚡	Slower
+Scalability	High	Limited
+Mechanism	Event-driven	Polling
+Cost	Lower	Higher
+🧪 REAL EXAMPLE FLOW
+Suppose files:
+file1.json
+file2.json
+file3.json
+First run:
+Processes all files
+Stores in checkpoint
+Next run:
+New file → file4.json
+What happens:
+Auto Loader checks checkpoint
+Sees file1–3 already processed
+Only processes file4
+🧠 INTERNAL SIMPLIFIED MODEL
+
+Think like this:
+
+Checkpoint:
+Processed = {file1, file2, file3}
+
+New scan:
+Found = {file1, file2, file3, file4}
+
+Process:
+New = Found - Processed = {file4}
+🎯 FINAL INTERVIEW ANSWER (POLISHED)
+
+If asked, say this:
+
+“Auto Loader ensures incremental ingestion by tracking processed files using checkpointing and metadata logs. In file notification mode, it leverages cloud events to detect new files instantly, while in directory listing mode, it scans storage and compares with previously processed files to identify new ones. This ensures scalability and avoids duplicate processing.”
+
+🔥 BONUS TRICK QUESTION THEY MAY ASK
+❓ “What happens if checkpoint is deleted?”
+✅ Answer:
+
+“Auto Loader may reprocess all files, leading to duplicates. To handle this, I ensure idempotent writes using deduplication or MERGE logic.”

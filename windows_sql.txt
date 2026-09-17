@@ -1,0 +1,192 @@
+Window functions are one of the most important (and confusing) SQL topics—but once you see the patterns, most questions become easy. I’ll give you a clear mental model + step-by-step approach + patterns + examples so you can solve almost any interview question.
+
+🧠 1. What is a Window Function?
+
+👉 A window function:
+
+Performs a calculation across a group of rows
+But does NOT collapse rows (unlike GROUP BY)
+🔍 Example
+SELECT 
+    customer_id,
+    order_amount,
+    SUM(order_amount) OVER (PARTITION BY customer_id) AS total_spent
+FROM orders;
+
+👉 Each row still exists, but we calculate totals per customer.
+
+🧩 2. Anatomy of Window Function
+FUNCTION() OVER (
+    PARTITION BY column
+    ORDER BY column
+)
+🔑 Components:
+Part	Meaning
+PARTITION BY	Grouping (like GROUP BY but keeps rows)
+ORDER BY	ترتيب داخل المجموعة
+FUNCTION	What you calculate
+🧠 3. Step-by-Step Approach (VERY IMPORTANT)
+
+Whenever you see a question:
+
+✅ Step 1: Identify the Requirement
+
+Ask:
+
+Per row output or aggregated?
+👉 If per row → Window function
+✅ Step 2: Identify the Group
+
+Ask:
+
+“Per what?” (customer, product, region)
+
+👉 That becomes:
+
+PARTITION BY
+✅ Step 3: Identify Ordering
+
+Ask:
+
+Is there time / ranking / sequence?
+
+👉 That becomes:
+
+ORDER BY
+✅ Step 4: Choose Function
+Requirement	Function
+Rank	ROW_NUMBER, RANK
+Total	SUM
+Running total	SUM + ORDER BY
+Previous row	LAG
+Next row	LEAD
+✅ Step 5: Filter (if needed)
+
+Use:
+
+QUALIFY
+
+(in Snowflake)
+
+🎯 4. Most Important Patterns
+🔥 Pattern 1: Top 1 per Group
+
+👉 “Latest order per customer”
+
+SELECT *
+FROM orders
+QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY customer_id
+    ORDER BY order_date DESC
+) = 1;
+🧠 Pattern:
+Partition = group
+Order = latest/earliest
+Filter = 1
+🔥 Pattern 2: Ranking
+SELECT 
+    customer_id,
+    order_amount,
+    RANK() OVER (
+        PARTITION BY customer_id
+        ORDER BY order_amount DESC
+    ) AS rnk
+FROM orders;
+🔥 Pattern 3: Running Total
+SELECT 
+    order_date,
+    SUM(order_amount) OVER (
+        ORDER BY order_date
+    ) AS running_total
+FROM orders;
+🔥 Pattern 4: Previous Row (LAG)
+SELECT 
+    order_date,
+    order_amount,
+    LAG(order_amount) OVER (
+        PARTITION BY customer_id
+        ORDER BY order_date
+    ) AS prev_amount
+FROM orders;
+🔥 Pattern 5: Difference Between Rows
+SELECT 
+    order_date,
+    order_amount,
+    order_amount - LAG(order_amount) OVER (
+        ORDER BY order_date
+    ) AS diff
+FROM orders;
+🔥 Pattern 6: Remove Duplicates (DataStage Equivalent)
+SELECT *
+FROM table
+QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY col1, col2
+    ORDER BY timestamp DESC
+) = 1;
+
+👉 Same as DataStage “Remove Duplicates”
+
+🔥 Pattern 7: First / Last Value
+SELECT 
+    customer_id,
+    FIRST_VALUE(order_amount) OVER (
+        PARTITION BY customer_id
+        ORDER BY order_date
+    ) AS first_order
+FROM orders;
+🔥 Pattern 8: Moving Average
+SELECT 
+    order_date,
+    AVG(order_amount) OVER (
+        ORDER BY order_date
+        ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+    ) AS moving_avg
+FROM orders;
+🧠 5. How to Identify the Pattern (Shortcut)
+
+When you read question → map like this:
+
+Question Type	Use
+“Latest / First”	ROW_NUMBER
+“Rank”	RANK
+“Running total”	SUM OVER
+“Previous value”	LAG
+“Next value”	LEAD
+“Compare rows”	LAG
+“Deduplicate”	ROW_NUMBER
+“Top N”	ROW_NUMBER + QUALIFY
+⚠️ 6. Common Mistakes
+
+❌ Forgetting ORDER BY
+❌ Using GROUP BY instead of window
+❌ Filtering with WHERE instead of QUALIFY
+❌ Not defining “first” properly
+
+🧠 7. Golden Formula (Memorize This)
+
+👉 For 80% problems:
+
+SELECT *
+FROM table
+QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY group_column
+    ORDER BY sorting_column DESC
+) = 1;
+🚀 8. Interview Thinking Example
+
+👉 Question:
+“Get latest record per dealer”
+
+Think:
+Latest → ORDER BY timestamp DESC
+Per dealer → PARTITION BY dealer
+One row → ROW_NUMBER = 1
+🎯 Final Mindset
+
+Always think:
+
+“What is my group?” → PARTITION
+“What is my order?” → ORDER BY
+“What do I calculate?” → FUNCTION
+
+

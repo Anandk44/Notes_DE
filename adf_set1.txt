@@ -1,0 +1,1422 @@
+Question 1: How do you process 1000 files efficiently?
+🧠 First — Understand the Problem
+
+👉 Interviewer is testing:
+
+Can you handle large scale data
+Do you know parallel processing
+Do you avoid naive (bad) approaches
+❌ Wrong Answer (what beginners say)
+
+“I will read files one by one and process them.”
+
+🚫 Problem:
+
+Very slow
+Not scalable
+✅ Correct Thinking (Step-by-Step)
+Step 1: Get list of files
+
+Use ADF:
+
+Get Metadata activity
+👉 This gives all files in a folder
+Step 2: Filter only required files
+
+Example:
+
+Only today’s files
+Only new files (watermark)
+Step 3: Process files in parallel
+
+Use:
+👉 ForEach activity
+
+Important setting:
+
+Batch count = 10 (or based on cluster size)
+
+👉 This means:
+
+10 files processed at same time
+NOT sequential
+Step 4: Send file to Databricks
+
+ADF passes:
+
+file_path → Databricks notebook
+Step 5: Databricks processes data
+
+In notebook:
+
+df = spark.read.csv(file_path)
+
+Spark handles:
+
+Parallel processing
+Distributed execution
+🔧 Full Flow
+Get Metadata
+     ↓
+Filter Files
+     ↓
+ForEach (Parallel)
+     ↓
+Databricks Notebook
+     ↓
+Write Output
+⚠️ Important Edge Cases (VERY IMPORTANT)
+1. Too many small files
+
+👉 Problem:
+
+Spark becomes slow
+
+👉 Solution:
+
+Use OPTIMIZE / file compaction
+2. Too much parallelism
+
+👉 Problem:
+
+Cluster crashes
+
+👉 Solution:
+
+Control batch count
+3. Duplicate processing
+
+👉 Problem:
+
+Same file processed twice
+
+👉 Solution:
+
+Maintain watermark / processed file list
+🎯 Perfect Interview Answer (Memorize This)
+
+“To process large number of files efficiently, I use a metadata-driven approach in ADF. 
+I first use Get Metadata to list files, then filter required files, and process them in 
+parallel using ForEach activity with controlled batch count. Each file path is passed 
+dynamically to a Databricks notebook where Spark processes data in distributed manner.
+ I also handle edge cases like small file problem and duplicate processing using 
+watermarking.”
+
+Question 2: How do you design batch + real-time pipeline?
+🧠 First — Understand the Question
+
+Interviewer is testing:
+
+Do you know difference between batch vs streaming
+Can you design scalable architecture
+❌ Wrong Answer
+
+“I will use one pipeline for everything.”
+
+🚫 Problem:
+
+Mixing batch + streaming = messy + unscalable
+✅ Correct Approach (Step-by-Step)
+Step 1: Separate pipelines
+
+👉 NEVER mix:
+
+Type	Tool
+Batch	ADF
+Real-time	Streaming (Databricks)
+Step 2: Batch Pipeline
+
+ADF:
+
+Schedule Trigger → Databricks Notebook → Load Data
+
+Used for:
+
+Daily loads
+Large datasets
+Step 3: Real-Time Pipeline
+
+Databricks:
+
+spark.readStream → process → writeStream
+
+Source:
+
+Kafka / Event Hub
+Step 4: Combine using Medallion Architecture
+Bronze (raw data)
+   ↓
+Silver (cleaned data)
+   ↓
+Gold (business data)
+
+👉 Both batch + streaming write to same layers
+
+⚠️ Edge Cases
+1. Late arriving data
+Streaming data may arrive late
+👉 Solution: watermarking
+2. Duplicate events
+
+👉 Solution: deduplication using window
+
+3. Out-of-order data
+
+👉 Solution: event-time processing
+
+🎯 Perfect Interview Answer
+
+“I design separate pipelines for batch and real-time processing. ADF is used for batch 
+orchestration, while Databricks Structured Streaming handles real-time ingestion. 
+Both pipelines write to a unified medallion architecture, ensuring consistency. 
+I also handle edge cases like late data, duplicates, and ordering issues 
+using watermarking and window functions.”
+
+🔥 Quick Summary
+Layer	Tool
+Batch	ADF
+Streaming	Databricks
+Storage	Delta Lake
+First — Understand What “Real-Time” Means
+
+👉 Real-time = data comes continuously
+Example:
+
+Orders coming every second
+Clickstream data
+IoT sensors
+
+👉 This is NOT batch (like daily files)
+
+🔧 What ADF is Designed For
+
+👉 ADF is:
+
+Batch-oriented
+Runs on triggers (schedule/event)
+Executes pipelines step-by-step
+
+So ADF works like:
+
+Run → Finish → Stop
+❌ Why ADF is NOT Suitable for Real-Time
+🚨 1. No Continuous Processing
+
+ADF cannot run continuously like a stream.
+
+👉 It always:
+
+Starts
+Executes
+Ends
+🚨 2. Latency (Delay)
+
+Even event-based trigger:
+
+Takes time to start pipeline
+Not instant
+
+👉 Real-time needs milliseconds / seconds
+
+🚨 3. Not Built for Streaming Sources
+
+ADF doesn’t natively handle:
+
+Kafka streams
+Event Hub streams (continuous)
+🚨 4. No Event-Time Handling
+
+Real-time systems need:
+
+Watermarking
+Windowing
+Ordering
+
+ADF ❌ cannot handle these
+
+✅ What Should Be Used Instead?
+
+👉 Use Databricks Structured Streaming
+
+Example:
+
+df = spark.readStream.format("eventhubs").load()
+
+This:
+
+Runs continuously
+Processes data instantly
+Handles late data, duplicates
+🎯 Perfect Interview Answer
+
+“ADF is not suitable for real-time streaming because it is a batch orchestration tool and cannot process data continuously. It works on trigger-based execution and introduces latency. For real-time use cases, I use Databricks Structured Streaming or Event Hub, which support continuous processing, low latency, and event-time handling.”
+
+
+3.How do you handle multiple data sources (API + DB + Files)?
+1. Different Formats
+API → JSON
+DB → Tables
+Files → CSV/Parquet
+🚨 2. Different Schemas
+Column names differ
+Data types differ
+🚨 3. Different Arrival Times
+API → real-time
+Files → batch
+DB → incremental
+🚨 4. Connection Complexity
+Different linked services
+Authentication issues
+🚀 Now Correct Approach (Step-by-Step)
+✅ Step 1: Separate ingestion for each source
+
+👉 Don’t mix everything in one step
+
+In ADF:
+API → Web Activity / Copy
+DB → Copy Activity
+Files → ADLS
+✅ Step 2: Land data into common storage
+
+👉 Store everything in:
+
+ADLS (Data Lake) → Bronze Layer
+✅ Step 3: Standardize in Databricks
+
+👉 This is the MOST IMPORTANT step
+
+In PySpark:
+
+# Example normalization
+df = df.select(
+    col("id").alias("customer_id"),
+    col("name"),
+    col("city")
+)
+
+👉 Convert:
+
+Same column names
+Same data types
+✅ Step 4: Apply transformations
+Join data
+Clean data
+Filter
+🔧 Roles Clearly
+Tool	Responsibility
+ADF	Ingestion + orchestration
+Databricks	Transformation + standardization
+⚠️ Edge Cases (VERY IMPORTANT)
+1. API Rate Limits
+
+👉 Solution:
+
+Retry
+Throttling
+2. Schema Drift
+
+👉 Columns change suddenly
+
+👉 Solution:
+
+Schema evolution
+Flexible parsing
+3. Missing Data
+
+👉 Some sources delayed
+
+👉 Solution:
+
+Wait logic / dependency
+4. Data Type Mismatch
+
+👉 String vs integer
+
+👉 Solution:
+
+Explicit casting
+🎯 Perfect Interview Answer
+
+“When dealing with multiple data sources like API, databases, and files, I design separate ingestion pipelines in ADF using appropriate activities for each source. All data is landed into a common storage layer like ADLS (Bronze layer). Then, in Databricks, I standardize schema and data types using PySpark before applying transformations. I also handle edge cases like schema drift, API throttling, and data type mismatches.”
+
+🔥 Simple Way to Remember
+
+👉 Ingest separately → Store together → Transform uniformly
+
+Question 4: How do you design a dependency pipeline (A → B → C)?
+“In a dependency pipeline, activities are executed sequentially using dependency conditions. By default, I configure downstream activities to run only on success of the previous step. However, in some scenarios where a step is optional, I use ‘on completion’ dependency to allow the pipeline to continue even if the previous step fails. I also ensure proper validation and error handling to avoid data inconsistencies.”
+
+
+5.How do you handle failures in ADF pipeline?
+You said:
+
+“Some data is written → wrong data in downstream systems → data irregularities”
+
+✔️ 100% correct — this is called:
+
+👉 Partial data / inconsistent state
+
+🚨 Why This Is a BIG Problem
+
+If pipeline fails in the middle:
+
+Step A → Step B → Step C
+
+If failure happens at B:
+
+A ✅ completed
+B ❌ failed
+C ❌ not run
+
+👉 Now system is in half-processed state
+
+🚀 How to Handle Failures (Step-by-Step)
+✅ 1. Retry Mechanism
+🔧 ADF
+Set retry count (e.g., 3)
+Retry interval
+
+👉 Handles temporary issues:
+
+Network glitch
+API timeout
+✅ 2. Dependency Handling
+
+👉 Only run next step if previous is successful
+
+Run B only if A = Success
+✅ 3. Idempotent Design (VERY IMPORTANT 🔥)
+
+👉 Pipeline should be safe to re-run
+
+Example:
+
+Don’t duplicate data
+Don’t corrupt data
+
+✔️ Use:
+
+MERGE instead of INSERT
+Overwrite partitions carefully
+✅ 4. Logging & Monitoring
+
+👉 Track:
+
+What failed
+Where it failed
+
+ADF:
+
+Monitor tab
+Activity output
+✅ 5. Failure Path (Custom Handling)
+
+ADF allows:
+
+On Failure → Send Email / Trigger Alert
+✅ 6. Checkpoint / Watermark
+
+👉 Avoid reprocessing everything
+
+Example:
+
+Store last processed record/time
+⚠️ Edge Cases (VERY IMPORTANT)
+🚨 1. Partial Data Written
+
+👉 Biggest issue
+
+✔️ Solution:
+
+Use transactional systems (Delta Lake)
+Or rollback strategy
+🚨 2. Duplicate Data After Retry
+
+👉 Happens if pipeline re-runs
+
+✔️ Solution:
+
+Idempotent logic
+Use unique keys
+🚨 3. Silent Failure
+
+👉 Pipeline shows success but data wrong
+
+✔️ Solution:
+
+Data validation checks
+🚨 4. External System Failure
+
+👉 API / DB down
+
+✔️ Solution:
+
+Retry + fallback
+🎯 Perfect Interview Answer
+
+“When handling failures in ADF pipelines, I implement retry mechanisms for transient failures and use dependency conditions to prevent downstream execution on failure. I design pipelines to be idempotent so they can be safely re-run without causing duplicates. I also use logging, monitoring, and alerts to track failures. To handle partial data issues, I rely on Delta Lake transactions or watermark-based processing to ensure data consistency.”
+
+Question 6: How do you design a reusable pipeline?
+“I will create 1 pipeline by parameterizing the table names”
+
+✔️ Correct — this is exactly what interviewers want.
+
+🚀 Full Explanation (Make It Interview-Ready)
+🧠 Problem Understanding
+
+👉 Requirement:
+
+5 tables
+Same logic (ingestion + transformation)
+
+❌ Bad approach:
+
+Create 5 pipelines (hard to maintain)
+✅ Correct Approach: Reusable Pipeline
+
+👉 Create 1 generic pipeline
+
+🔧 Step-by-Step Design
+✅ Step 1: Create Pipeline Parameters
+
+In ADF:
+
+table_name
+source_path
+target_path
+✅ Step 2: Use Parameters in Activities
+
+Example:
+
+Dataset → dynamic path
+Query → dynamic table
+✅ Step 3: Pass Parameters to Databricks
+
+ADF → Notebook:
+
+table_name = customers
+
+Databricks:
+
+table = dbutils.widgets.get("table_name")
+✅ Step 4: Use Same Logic for All Tables
+df = spark.read.table(table)
+
+👉 Same notebook works for all tables
+
+✅ Step 5: Trigger Pipeline Dynamically
+
+👉 Option 1:
+
+Manually pass parameters
+
+👉 Option 2:
+
+Use Lookup + ForEach
+Loop through list of tables
+🔁 Example Flow
+Lookup (list of tables)
+     ↓
+ForEach
+     ↓
+Execute Pipeline (with parameters)
+⚠️ Edge Cases (VERY IMPORTANT)
+🚨 1. Different Schema Per Table
+
+👉 Problem:
+
+One logic may not fit all tables
+
+✔️ Solution:
+
+Use config table
+Handle schema dynamically
+🚨 2. Hardcoding Inside Notebook
+
+👉 Problem:
+
+Breaks reusability
+
+✔️ Solution:
+
+Always use parameters
+🚨 3. Debugging Becomes Hard
+
+👉 Problem:
+
+Same pipeline used everywhere
+
+✔️ Solution:
+
+Add proper logging
+🚨 4. Performance Issues
+
+👉 Running many tables in parallel
+
+✔️ Solution:
+
+Control ForEach batch count
+🎯 Perfect Interview Answer
+
+“Instead of creating multiple pipelines, I design a reusable pipeline using parameterization. I define parameters like table name, source path, and target path, and pass them dynamically to datasets and Databricks notebooks. I also use a Lookup and ForEach activity to process multiple tables dynamically. This approach improves maintainability and scalability while reducing duplication.”
+
+Question 7: How do you handle parameterization across pipelines?
+👉 Your Turn
+
+If Pipeline A calls Pipeline B…
+
+👉 How will you pass parameters from A → B?
+
+(Answer in your words 👍)
+
+i will define parameters at global level then i will pass parameters in the pipeline
+
+Good — you’re close 👍
+But this is where interviewers check clarity of ADF concepts, so let’s refine it properly.
+
+❌ Small Correction in Your Answer
+
+You said:
+
+“I will define parameters at global level and pass them”
+
+👉 Problem:
+
+Global parameters are NOT meant for passing between pipelines
+They are mostly for constants/config (like environment URLs)
+✅ Correct Approach (Step-by-Step)
+🧠 Scenario
+
+👉 Pipeline A calls Pipeline B
+👉 You want to pass values (like table_name, file_path)
+
+✅ Step 1: Define Parameters in Pipeline B
+
+In Pipeline B:
+
+table_name
+file_path
+✅ Step 2: Use Execute Pipeline Activity in Pipeline A
+
+In Pipeline A:
+
+Add Execute Pipeline activity
+Select Pipeline B
+✅ Step 3: Pass Parameters
+
+In Execute Pipeline activity:
+
+table_name = 'customers'
+file_path = '/data/file1.csv'
+
+👉 These values are passed to Pipeline B
+
+🔁 Flow
+Pipeline A
+   ↓
+Execute Pipeline Activity
+   ↓
+Pipeline B (receives parameters)
+🔧 Where Global Parameters Are Used
+
+👉 Global parameters = environment-level constants
+
+Examples:
+
+Storage account name
+Environment (dev/prod)
+Common paths
+⚠️ Edge Cases (VERY IMPORTANT)
+🚨 1. Parameter Not Passed
+
+👉 Pipeline B fails
+
+✔️ Solution:
+
+Set default values
+Validate inputs
+🚨 2. Type Mismatch
+
+👉 String vs int
+
+✔️ Solution:
+
+Ensure correct datatype
+🚨 3. Missing Mandatory Parameters
+
+👉 Pipeline crash
+
+✔️ Solution:
+
+Use validation logic
+🚨 4. Hardcoding Values
+
+👉 Not reusable
+
+✔️ Solution:
+
+Always pass dynamically
+🎯 Perfect Interview Answer
+
+“To pass parameters between pipelines, I define parameters in the child pipeline and use the Execute Pipeline activity in the parent pipeline to pass values dynamically. Global parameters are typically used for environment-level constants, not for passing runtime values between pipelines.”
+
+Question 8: How do you process data for multiple countries dynamically?
+👉 Your Turn
+
+Let’s think:
+
+If you have:
+
+USA, India, UK, Canada
+
+👉 How will you process all of them using ONE pipeline?
+
+(Try answering 👍)
+
+Ads do not influence the answers you get from ChatGPT. Your chats stay private. 
+Learn about ads and personalization
+i will create seperate folder for every country and call them dynamically using parameterization
+
+Nice — you’re thinking in the right direction (dynamic + parameterized) 👍
+Let’s refine it into a strong interview answer.
+
+✅ Your Answer (Refined)
+
+You said:
+
+“Create separate folder for every country and call dynamically using parameterization”
+
+✔️ Good idea
+👉 But this is only part of the solution
+
+🧠 What Interviewer EXPECTS
+
+They want:
+
+Dynamic processing
+Scalable design
+Avoid hardcoding
+🚀 Correct Approach (Step-by-Step)
+✅ Step 1: Maintain List of Countries
+
+👉 Don’t hardcode in pipeline
+
+Use:
+
+Lookup (table / JSON / config)
+
+Example:
+
+USA
+India
+UK
+Canada
+✅ Step 2: Use ForEach Loop
+
+ADF:
+
+ForEach (country list)
+
+👉 Each iteration = one country
+
+✅ Step 3: Pass Country as Parameter
+
+Inside ForEach:
+
+country = @item()
+✅ Step 4: Build Dynamic Path
+
+Example:
+
+/data/@{country}/sales.csv
+
+👉 Now:
+
+USA → /data/USA/sales.csv
+India → /data/India/sales.csv
+✅ Step 5: Send to Databricks
+country → notebook parameter
+
+Databricks:
+
+country = dbutils.widgets.get("country")
+🔁 Full Flow
+Lookup (countries)
+     ↓
+ForEach
+     ↓
+Pass country parameter
+     ↓
+Databricks processing
+⚠️ Edge Cases (VERY IMPORTANT)
+🚨 1. Missing Folder for Country
+
+👉 Pipeline fails
+
+✔️ Solution:
+
+Use Get Metadata to check existence
+🚨 2. Uneven Data Volume
+
+👉 USA = large data
+👉 Others = small
+
+✔️ Solution:
+
+Control parallelism
+🚨 3. Schema Differences
+
+👉 Country-specific schema
+
+✔️ Solution:
+
+Standardize in Databricks
+🚨 4. Too Many Countries
+
+👉 Performance issue
+
+✔️ Solution:
+
+Batch processing
+🎯 Perfect Interview Answer
+
+“To process multiple countries dynamically, I use a metadata-driven approach. I store the list of countries in a configuration source and use a Lookup activity followed by a ForEach loop in ADF. Inside the loop, I pass the country as a parameter and dynamically construct file paths or table names. The processing is then handled in Databricks, ensuring scalability and reusability.”
+
+
+How do you design a pipeline that runs only when a file arrives?
+using trigger 
+
+Good 👍 — that’s correct, but too generic for interview.
+Let’s refine it into a strong, complete answer.
+
+✅ Your Answer (Refined)
+
+You said:
+
+“Using trigger”
+
+✔️ Correct — but interviewer expects:
+👉 Which trigger? How? Why? Edge cases?
+
+🚀 Correct Answer (Step-by-Step)
+🧠 Step 1: Understand Requirement
+
+👉 Pipeline should run:
+
+ONLY when file arrives
+NOT on schedule
+✅ Step 2: Use Event-Based Trigger
+
+👉 In ADF:
+
+Use:
+👉 Event Trigger (Storage Event Trigger)
+
+🔧 How It Works
+ADLS → File Created Event → ADF Trigger → Pipeline Runs
+✅ Step 3: Configure Trigger
+
+In ADF:
+
+Select storage account
+Event type = Blob Created
+Path = folder location
+
+Example:
+
+/data/input/
+✅ Step 4: Pass File Name Dynamically
+
+ADF automatically gives:
+
+@triggerBody().fileName
+@triggerBody().folderPath
+
+👉 Use this in pipeline
+
+🔁 Flow
+File arrives
+   ↓
+Event Trigger fires
+   ↓
+Pipeline runs
+   ↓
+Databricks processes file
+⚠️ Edge Cases (VERY IMPORTANT)
+🚨 1. Partial File Arrival
+
+👉 File may still be uploading
+
+✔️ Solution:
+
+Add delay
+Or check file size stability
+🚨 2. Multiple Triggers
+
+👉 Many files → many pipeline runs
+
+✔️ Solution:
+
+Batch files
+Use queue mechanism
+🚨 3. Duplicate Events
+
+👉 Same file triggers twice
+
+✔️ Solution:
+
+Maintain processed file log
+🚨 4. Wrong Folder Triggered
+
+👉 Misconfiguration
+
+✔️ Solution:
+
+Use proper path filters
+🎯 Perfect Interview Answer
+
+“To trigger a pipeline when a file arrives, I use an event-based trigger in ADF configured on ADLS for blob created events. The trigger automatically starts the pipeline when a new file is detected, and I pass the file name dynamically using trigger expressions. I also handle edge cases like partial file arrival and duplicate triggers using validation and logging.”
+
+Question 10: How do you build a pipeline that processes data in parallel?
+
+adf is for orchestratio  if i want to do parallel processing i will use databricks and then call the notebook in adf
+
+Good thinking 👍 — you’re not wrong, but you’re mixing two layers.
+
+👉 Interviewers want you to clearly separate:
+
+ADF parallelism
+Databricks parallelism
+
+Let’s fix that and make it perfect.
+
+❌ What’s Missing in Your Answer
+
+You said:
+
+“ADF is for orchestration, parallel processing in Databricks”
+
+✔️ True
+❗ But incomplete
+
+👉 Because:
+
+ADF itself CAN run things in parallel
+Databricks is for data processing parallelism
+🚀 Correct Understanding
+🧠 There are TWO types of parallelism
+🔹 1. ADF-Level Parallelism (Orchestration)
+
+👉 Running multiple tasks at same time
+
+Example:
+10 files → process in parallel
+🔧 How?
+
+👉 Use:
+
+ForEach Activity (batch count)
+
+Example:
+
+Batch count = 5
+
+👉 5 parallel executions
+
+🔹 2. Databricks-Level Parallelism (Processing)
+
+👉 Inside notebook:
+
+df = spark.read.csv()
+
+Spark:
+
+Splits data
+Runs on multiple executors
+🔁 Full Combined Flow
+ADF ForEach (parallel)
+        ↓
+Multiple Databricks Jobs
+        ↓
+Each job runs Spark (parallel inside)
+⚠️ Edge Cases (VERY IMPORTANT)
+🚨 1. Too Much Parallelism (ADF)
+
+👉 Too many notebooks → cluster overload
+
+✔️ Solution:
+
+Tune batch count
+🚨 2. Too Much Parallelism (Spark)
+
+👉 Too many partitions
+
+✔️ Solution:
+
+Repartition properly
+🚨 3. Resource Contention
+
+👉 All jobs fighting for cluster
+
+✔️ Solution:
+
+Autoscaling cluster
+🎯 Perfect Interview Answer
+
+“Parallel processing can be achieved at two levels. In ADF, I use ForEach activity with batch count to run multiple activities in parallel for orchestration. In Databricks, Spark handles data processing in parallel using distributed computing. I carefully tune both levels of parallelism to avoid resource contention and ensure optimal performance.”
+
+Question 11: How do you process only NEW files in ADF?
+🧠 What Interviewer Wants
+
+They want to check:
+
+Do you know incremental processing
+Can you avoid reprocessing old files
+✅ Approach 1: Using Last Modified Date (ADF Native Way)
+🔧 Step-by-Step (ADF Only)
+✅ Step 1: Get list of files
+
+Use:
+👉 Get Metadata activity
+
+Field: childItems
+Points to folder
+✅ Step 2: Filter new files
+
+Use:
+👉 Filter Activity
+
+Condition:
+
+@greater(item().lastModified, pipeline().parameters.last_run_time)
+
+👉 Keeps only new files
+
+✅ Step 3: Loop through filtered files
+
+Use:
+👉 ForEach Activity
+
+Input:
+
+@activity('Filter').output.value
+✅ Step 4: Process each file
+Pass file name dynamically
+Use Copy Activity or Databricks
+🔁 Flow
+Get Metadata
+     ↓
+Filter (new files)
+     ↓
+ForEach
+     ↓
+Process files
+✅ Step 5: Maintain Watermark (VERY IMPORTANT)
+
+👉 Store last run time
+
+Options:
+
+SQL table
+Blob file
+Pipeline parameter
+
+Example:
+
+last_run_time = 2026-04-07 10:00
+⚠️ Edge Cases (VERY IMPORTANT)
+🚨 1. File Updated but Same Name
+
+👉 lastModified changes
+
+✔️ Good — will be picked
+
+🚨 2. Late Arriving Files
+
+👉 Old timestamp but arrives late
+
+❌ Missed
+
+✔️ Solution:
+
+Use buffer window
+OR file tracking table
+🚨 3. Duplicate Processing
+
+👉 Pipeline rerun
+
+✔️ Solution:
+
+Maintain processed file log
+🚨 4. Metadata Not Accurate
+
+👉 Some systems don’t update lastModified
+
+✔️ Solution:
+
+Use file naming pattern (date-based)
+🎯 Perfect Interview Answer
+
+“To process only new files in ADF, I use Get Metadata activity to list files and then apply a Filter activity based on last modified timestamp or a stored watermark. The filtered files are then processed using a ForEach loop. I maintain the watermark in a control table or parameter to ensure incremental processing and avoid duplicates.”
+----------------------------------------------------------
+Difference between Lookup vs Get Metadata (Real Scenario)
+when we want to have a set of file we will use lookup and if we want information about data we will use metadata
+
+Good 👍 — you’re close, but let’s correct and sharpen this because this is a very commonly asked question and interviewers expect precision.
+
+❌ Issue in Your Answer
+
+You said:
+
+“Lookup → set of file, Metadata → information about data”
+
+👉 Not exactly correct.
+
+✅ Correct Understanding (Very Important)
+🧠 Core Difference
+Feature	Lookup Activity	Get Metadata Activity
+Purpose	Read data/content	Read file/folder properties
+Input	Table / File content	File / Folder
+Output	Rows (data)	Properties (name, size, lastModified)
+🚀 When to Use Lookup (Real Scenario)
+
+👉 Use Lookup when you want to read actual data
+
+Examples:
+Read config table
+Get list of countries
+Get watermark value
+
+Example:
+
+SELECT country FROM config_table
+
+👉 Output:
+
+USA, India, UK
+🚀 When to Use Get Metadata (Real Scenario)
+
+👉 Use Get Metadata when you want file info
+
+Examples:
+List files in folder
+Check if file exists
+Get last modified date
+
+Example output:
+
+file1.csv, file2.csv
+🔁 Simple Way to Remember
+
+👉 Lookup = DATA
+👉 Metadata = FILE INFO
+
+⚠️ Edge Cases (VERY IMPORTANT)
+🚨 1. Large Dataset in Lookup
+
+👉 Problem:
+
+Lookup is NOT for big data
+
+✔️ Solution:
+
+Use Copy Activity instead
+🚨 2. Expecting File Content from Metadata
+
+👉 Wrong usage
+
+✔️ Metadata cannot read file data
+
+🚨 3. File Doesn’t Exist
+
+👉 Metadata fails
+
+✔️ Solution:
+
+Use exists property
+🎯 Perfect Interview Answer
+
+“Lookup activity is used to read actual data from a source like a table or file, such as configuration values or control tables. Get Metadata activity is used to retrieve file or folder properties like file name, size, or last modified date. Lookup deals with data content, while Get Metadata deals with file-level information.”
+-----------------------------------------
+How do you loop through files in ADF?
+i will first read data using lookup activity and then check if file is exist or not using metadata activity and then use for each activity for looping through the files
+
+
+
+Good effort 👍 — you’re combining concepts, but let’s clean it up and make it correct + interview-ready.
+
+❌ What Needs Correction
+
+You said:
+
+Lookup → Metadata → ForEach
+
+👉 Problem:
+
+Lookup is NOT needed to loop files
+Lookup is for data, not file listing
+✅ Correct Approach (ADF Standard Pattern)
+🚀 Step-by-Step (Proper Flow)
+✅ Step 1: Get list of files
+
+Use:
+👉 Get Metadata Activity
+
+Settings:
+
+Field: childItems
+
+👉 Output:
+
+file1.csv, file2.csv, file3.csv
+✅ Step 2: Loop through files
+
+Use:
+👉 ForEach Activity
+
+Input:
+
+@activity('Get Metadata').output.childItems
+✅ Step 3: Access file inside loop
+
+Inside ForEach:
+
+@item().name
+
+👉 This gives current file name
+
+✅ Step 4: Process file
+Copy Activity OR
+Databricks Notebook
+
+Pass:
+
+file_name = @item().name
+🔁 Full Flow
+Get Metadata (list files)
+        ↓
+ForEach (loop)
+        ↓
+Process each file
+🔧 When to Use Lookup Here?
+
+👉 Only if:
+
+File list is stored in DB
+Config-driven pipeline
+
+Example:
+
+SELECT file_name FROM control_table
+⚠️ Edge Cases (VERY IMPORTANT)
+🚨 1. Empty Folder
+
+👉 ForEach gets nothing
+
+✔️ Solution:
+
+Add condition check
+🚨 2. Too Many Files
+
+👉 Performance issue
+
+✔️ Solution:
+
+Use batch count
+🚨 3. Wrong File Types
+
+👉 Unexpected files
+
+✔️ Solution:
+
+Filter activity
+🚨 4. File Not Ready (Partial Upload)
+
+👉 Processing fails
+
+✔️ Solution:
+
+Add delay / validation
+🎯 Perfect Interview Answer
+
+“To loop through files in ADF, I use Get Metadata activity with childItems to list all files in a folder, and then pass the output to a ForEach activity. Inside the loop, I access each file using @item().name and process it using Copy activity or Databricks notebook. Lookup is only used if file information is stored in a control table.”
+
+--------------------------------------------------------
+Question 14: How do you pass dynamic file names to Databricks?
+👉 Your Turn
+
+Inside ForEach, how will you send file name to Databricks notebook?
+
+(Try answering 👍)
+
+i will create widgets in databricks and try to read from databric's
+
+Good 👍 — you’re very close, just need to connect ADF → Databricks properly.
+
+✅ Your Answer (Refined)
+
+You said:
+
+“Create widgets in Databricks and read from Databricks”
+
+✔️ Correct idea
+❗ Missing piece:
+👉 How ADF sends value to that widget
+
+🚀 Correct End-to-End Flow
+🧠 Goal
+
+👉 Pass file name from ADF → Databricks notebook
+
+✅ Step 1: Inside ADF (ForEach)
+
+You already have:
+
+@item().name
+
+👉 This is current file name
+
+✅ Step 2: Databricks Notebook Activity
+
+In ADF → Databricks activity:
+
+👉 Use Base Parameters
+
+Example:
+
+file_name = @item().name
+✅ Step 3: Inside Databricks Notebook
+
+Create widget:
+
+dbutils.widgets.text("file_name", "")
+file_name = dbutils.widgets.get("file_name")
+✅ Step 4: Use It
+df = spark.read.csv(f"/mnt/data/{file_name}")
+🔁 Full Flow
+Get Metadata
+     ↓
+ForEach
+     ↓
+@item().name
+     ↓
+ADF passes to Databricks (Base Parameter)
+     ↓
+Databricks widget reads value
+⚠️ Edge Cases (VERY IMPORTANT)
+🚨 1. Parameter Not Passed
+
+👉 Notebook fails
+
+✔️ Solution:
+
+Default value in widget
+🚨 2. Wrong Parameter Name
+
+👉 ADF vs notebook mismatch
+
+✔️ Solution:
+
+Keep names consistent
+🚨 3. File Path Issues
+
+👉 Only file name passed
+
+✔️ Solution:
+
+Pass full path
+🚨 4. Special Characters in File Name
+
+👉 Read failure
+
+✔️ Solution:
+
+Clean / encode path
+🎯 Perfect Interview Answer
+
+“To pass dynamic file names to Databricks, I use the ForEach activity in ADF to iterate through files and pass the file name using base parameters in the Databricks notebook activity. Inside the notebook, I use dbutils.widgets to retrieve the parameter and use it dynamically for processing.”
+
+🔥 Key Insight
+
+👉 Always say:
+
+“ADF passes parameters using base parameters, and Databricks reads them using widgets”
+---------------------------------------------------------
+Question 15: How do you schedule pipelines in ADF?
+
+i will trigger pipelines using triggers like event based time based triggers
+
+Good 👍 — that’s correct, now let’s make it interview-strong and structured.
+
+✅ Your Answer (Refined)
+
+You said:
+
+“Event-based and time-based triggers”
+
+✔️ Correct
+👉 Let’s expand it properly so you sound experienced
+
+🚀 Types of Triggers in ADF (Complete Answer)
+🔹 1. Schedule Trigger (Time-Based)
+
+👉 Runs pipeline at fixed time
+
+Examples:
+Daily at 2 AM
+Every hour
+🔧 Use Case
+Batch processing
+Daily ETL jobs
+⚠️ Edge Case
+Missed run if pipeline fails
+
+✔️ Solution:
+
+Retry / monitoring
+🔹 2. Event-Based Trigger
+
+👉 Runs when event happens
+
+Example:
+
+File arrives in ADLS → trigger pipeline
+🔧 Use Case
+File ingestion
+Near real-time processing
+⚠️ Edge Case
+Partial file arrival
+Duplicate triggers
+🔹 3. Tumbling Window Trigger (VERY IMPORTANT 🔥)
+
+👉 Advanced trigger for incremental processing
+
+Example:
+Process data every 1 hour window
+Key Features:
+Maintains state
+Ensures no data loss
+Supports retry of specific window
+🔧 Use Case
+Incremental loads
+Time-based partition processing
+⚠️ Edge Case
+Late arriving data
+
+✔️ Solution:
+
+Delay / dependency
+🔁 Simple Comparison
+Trigger	Use
+Schedule	Fixed time
+Event	File arrival
+Tumbling	Incremental windows
+🎯 Perfect Interview Answer
+
+“ADF supports three main types of triggers: schedule triggers for time-based execution, event-based triggers for file arrival scenarios, and tumbling window triggers for incremental processing with state management. I choose the trigger type based on the use case, such as using event triggers for file ingestion and tumbling window triggers for reliable incremental loads.”
+
+🔥 Key Insight (Very Important)
+
+👉 Say this:
+
+“Tumbling window trigger is preferred for incremental pipelines because it maintains state and ensures no data is missed.”

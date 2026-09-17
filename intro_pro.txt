@@ -1,0 +1,38 @@
+The project was part of an enterprise data platform modernization initiative. The business wanted to replace its legacy on-premises ETL and data warehouse platform with a scalable cloud-based architecture because the existing environment had long batch processing windows, limited scalability, high infrastructure costs, and increasing maintenance effort. The goal was to build a modern data platform on AWS that could process large volumes of enterprise data efficiently while providing faster and more reliable reporting.
+
+The source systems included on-premises DB2, Mainframe, Oracle, and SQL Server databases. These systems stored operational and transactional data from different business applications. The existing ETL layer was developed using IBM DataStage, where all the extraction, transformation, and loading logic was implemented before loading the data into the legacy data warehouse.
+
+As part of the modernization, we designed a cloud-native data pipeline using Amazon S3, Apache Spark running on Amazon EMR, Snowflake, and Apache Airflow.
+
+The pipeline started by extracting data from DB2, Mainframe, Oracle, and SQL Server using Spark jobs running on Amazon EMR. We selected EMR because the data volume was large, and Spark's distributed processing allowed us to process multiple partitions in parallel, making data extraction much faster than the traditional ETL approach.
+
+The extracted raw data was loaded into Amazon S3, which served as the enterprise data lake. S3 acted as the centralized storage layer where all raw data was stored before further processing. This architecture separated compute from storage, allowing independent scaling of both resources while significantly reducing storage costs.
+
+After the raw data landed in S3, Spark performed data cleansing, schema standardization, data quality validations, and basic transformations. Once the raw data was standardized, we analyzed the existing DataStage jobs and re-engineered the business logic into cloud-native Spark and Snowflake SQL pipelines. Complex transformations such as joins, lookups, aggregations, filters, surrogate key generation, deduplication, and business validations were implemented using Spark and Snowflake SQL based on the complexity of each transformation.
+
+The complete pipeline was orchestrated using Apache Airflow. Airflow was responsible for scheduling jobs, maintaining task dependencies, monitoring pipeline execution, handling retries, sending failure notifications, and restarting failed tasks without rerunning the complete workflow. This made the overall data pipeline highly reliable and easier to manage in production.
+
+The cloud-based architecture delivered significant business benefits. Since Amazon EMR clusters and Snowflake virtual warehouses could be started only when required and automatically shut down after processing, the organization reduced infrastructure costs by approximately **25–30%** compared to the always-on on-premises environment. Batch processing time was reduced from nearly **6 hours to around 2–3 hours** because Spark processed data in parallel across multiple worker nodes instead of sequential execution in the legacy ETL platform. The new architecture also provided better scalability, allowing the platform to process increasing data volumes without additional physical hardware.
+
+To ensure data quality, every pipeline was validated through row-count reconciliation, source-to-target comparisons, aggregate validation, duplicate checks, null validations, and business rule verification before deployment to production. This consistently maintained data accuracy above **99.9%** and ensured that business reports matched the legacy system.
+
+In addition to this AWS-based project, I also worked on migrating Informatica PowerCenter workloads to Microsoft Azure using Azure Data Factory, Azure Databricks, ADLS Gen2, and Synapse Analytics, which gave me hands-on experience with cloud data engineering across both AWS and Azure.
+
+
+Hi, I'm Anand. I have around 3 years of experience as a Data Engineer, specializing in building cloud-based data pipelines, large-scale data processing, and enterprise data migration projects.
+Currently, in my organization , I design and develop ETL pipelines using Snowflake, Apache Spark, Python, Airflow, and AWS services such as S3 and EMR. My work involves ingesting data from different source systems, transforming it using Spark and Snowflake, and loading it into cloud-based data warehouses for analytics and reporting.
+I analyzed legacy DataStage and Informatica workflows, converted business logic into optimized Snowflake SQL and Spark pipelines, and developed reusable modernization utilities.
+I have worked extensively on optimizing Spark workloads using techniques like broadcast joins, partition pruning, caching, and Adaptive Query Execution. I have also designed Airflow DAGs with dependency management, retries, monitoring, and alerting to build reliable and scalable ETL workflows.
+Now, I'm looking for an opportunity where I can work on large-scale cloud data platforms, build distributed data processing systems, and contribute to end-to-end data engineering solutions.
+
+
+action verb + task + with quantifying numbers
+
+Whenever you're debugging a Spark job, ask yourself:
+Storage Layer: Am I reading too much data? Can partition pruning, predicate pushdown, or Dynamic Partition Pruning reduce I/O?
+Partition Layer: Do I have enough partitions for parallelism? Are there too many tiny partitions or too few large ones?
+Task Layer: Are tasks balanced, or is one task taking much longer than the others (data skew)?
+Executor Layer: Are tasks spilling to disk? Is memory sufficient? Are cores idle?
+Shuffle Layer: Can I reduce or eliminate shuffle using broadcast joins, map-side aggregation, better partitioning, or bucketing?
+
+This layered way of thinking is how experienced Spark engineers diagnose performance problems.

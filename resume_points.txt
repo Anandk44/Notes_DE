@@ -1,0 +1,298 @@
+**ANAND KOYALMUDI**
+📧 [anandkoyalmudi424@gmail.com](mailto:anandkoyalmudi424@gmail.com) | 📞 +91-9145331326
+
+---
+
+## **AZURE DATA ENGINEER | 3+ YEARS EXPERIENCE**
+
+Data Engineer specializing in building high-performance, cloud-native data platforms on Azure. Delivered **40–70% performance improvements**, **30% cost reductions**, and **80% automation gains** by modernizing legacy ETL systems into scalable Databricks + Delta Lake architectures. Proven track record of designing production-grade pipelines with **99.9% data accuracy**.
+
+---
+
+## **CORE SKILLS**
+
+**Languages & Processing:** Python, SQL, PySpark, Apache Spark
+**Azure Stack:** Azure Data Factory, Azure Databricks, ADLS Gen2, Azure SQL
+**Data Engineering:** Delta Lake, Medallion Architecture, ETL/ELT, Data Modeling
+**Orchestration & DevOps:** ADF, Airflow, Databricks Workflows, CI/CD, GitHub
+
+---
+
+## **PROFESSIONAL EXPERIENCE**
+
+### **Data Engineer | DataSwitch**
+
+📅 Jun 2023 – Present
+
+* Migrated **25+ legacy ETL pipelines** (Informatica/DataStage) to Azure Databricks, reducing **end-to-end runtime by 40%** and eliminating legacy licensing costs.
+* Re-engineered complex transformations into PySpark using **partitioning, broadcast joins, and caching**, achieving **60% faster processing** and improved scalability for large datasets.
+* Designed **Bronze–Silver–Gold (Medallion) architecture** on ADLS Gen2, enabling structured data flow and improving downstream analytics reliability.
+* Built **ADF-driven orchestration framework** with parameterization, dependency handling, and retry logic, reducing **manual intervention by 80%**.
+* Implemented **Delta Lake optimization techniques (OPTIMIZE, Z-ORDER, schema evolution)**, improving query performance by **35–71%**.
+* Consolidated legacy workflows into **ADF + Databricks Jobs**, improving monitoring visibility and reducing pipeline failures by **50%**.
+* Developed **data validation frameworks** ensuring **99.9% data accuracy**, significantly reducing production defects.
+* Reduced infrastructure and compute costs by **30%** through optimized Spark execution and efficient resource utilization.
+* Enabled centralized governance using **Unity Catalog**, improving data security and access control compliance.
+
+---
+
+### **Data Engineer Intern | Revature**
+
+📅 Jan 2023 – May 2023
+
+* Built **end-to-end ingestion pipelines** using ADF to pull data from REST APIs (GitHub) into ADLS Gen2, enabling automated data availability.
+* Developed **dynamic pipeline framework** using parameters, JSON configs, and ForEach activities to scale ingestion across multiple datasets.
+* Orchestrated Databricks notebooks with **parameterized execution and dependency management**, reducing pipeline setup time by **40%**.
+
+---
+
+## **EDUCATION**
+
+**MCA – Ranibai Agnihotri College of Engineering**
+📍 Chennai | 🎓 CGPA: 8.0 | 📅 2020 – 2022
+
+---
+
+## **KEY IMPACT SUMMARY**
+
+* ⚡ **40–70% performance improvement** across pipelines
+* 💰 **30% cost reduction** via cloud optimization
+* 🤖 **80% reduction in manual effort** through automation
+* ✅ **99.9% data accuracy** in production systems
+* 🔄 **25+ pipelines modernized** to Azure-native architecture
+
+---
+***************************************************
+
+**ANAND KOYALMUDI**
+📧 [anandkoyalmudi424@gmail.com](mailto:anandkoyalmudi424@gmail.com) | 📞 +91-9145331326
+
+---
+
+## **AZURE DATA ENGINEER | 3+ YEARS EXPERIENCE**
+
+Azure Data Engineer with 3+ years of experience building scalable **cloud-native data pipelines** using **Azure Data Factory (ADF), Azure Databricks, PySpark, and Delta Lake**. Delivered **40–70% performance improvements**, **30% cost optimization**, and **80% automation gains** by modernizing **legacy ETL (Informatica, DataStage)** into **distributed big data processing frameworks**. Strong expertise in **data modeling, ETL/ELT pipelines, data warehousing, and real-time data processing** with **99.9% data accuracy**.
+
+---
+
+## **TECHNICAL SKILLS**
+
+**Programming & Querying:** Python, SQL, PySpark, Spark SQL
+**Big Data & Processing:** Apache Spark, Distributed Data Processing, Delta Lake, Data Lakehouse
+**Cloud Platform (Azure):** Azure Data Factory (ADF), Azure Databricks, Azure Data Lake Storage Gen2 (ADLS), Azure SQL Database
+**Data Engineering Concepts:** ETL/ELT Pipelines, Data Warehousing, Dimensional Modeling (Star Schema, Snowflake Schema), Medallion Architecture (Bronze-Silver-Gold)
+**Orchestration & Scheduling:** ADF Pipelines, Databricks Workflows, Apache Airflow
+**Optimization Techniques:** Partitioning, Broadcast Joins, Caching, Z-ORDER, OPTIMIZE, Schema Evolution
+**DevOps & Tools:** Azure DevOps, CI/CD Pipelines, GitHub, Version Control
+**Governance & Security:** Unity Catalog, Data Governance, Role-Based Access Control (RBAC)
+
+---
+
+## **PROFESSIONAL EXPERIENCE**
+
+### **Data Engineer | DataSwitch**
+
+📅 Jun 2023 – Present
+
+* Migrated **25+ legacy ETL pipelines (Informatica, DataStage)** to **Azure Databricks (PySpark)**, reducing **pipeline runtime by 40%** and enabling scalable **cloud data engineering architecture**.
+* Re-engineered complex transformations using **Apache Spark optimization techniques (partitioning, broadcast joins, caching)**, improving **data processing performance by 60%** on large-scale datasets.
+* Designed and implemented **Medallion Architecture (Bronze, Silver, Gold)** on **ADLS Gen2 with Delta Lake**, enabling reliable **data lakehouse architecture** for analytics and BI workloads.
+* Built **end-to-end ETL/ELT pipelines using Azure Data Factory (ADF)** with parameterization, dependency handling, and retry logic, reducing **manual effort by 80%**.
+* Applied **Delta Lake performance optimization (OPTIMIZE, Z-ORDER, schema evolution)** to improve **query performance by 35–71%**.
+* Integrated **ADF with Databricks Jobs** for orchestration, improving **pipeline reliability, monitoring, and failure recovery by 50%**.
+* Developed **data validation and quality frameworks** ensuring **99.9% data accuracy**, aligning with enterprise data governance standards.
+* Reduced **cloud infrastructure costs by 30%** through efficient **Spark job tuning and resource optimization**.
+* Implemented **Unity Catalog for centralized data governance**, improving **data security, lineage tracking, and access control (RBAC)**.
+
+---
+
+### **Data Engineer Intern | Revature**
+
+📅 Jan 2023 – May 2023
+
+* Built **ADF-based data ingestion pipelines** to extract data from **REST APIs (GitHub API)** into **Azure Data Lake Storage Gen2**, enabling automated **data ingestion workflows**.
+* Developed **metadata-driven and parameterized pipelines** using JSON configurations and ForEach loops, improving **pipeline scalability and reusability**.
+* Orchestrated **Databricks notebooks using workflows and widgets**, enabling **dynamic execution and dependency management**, reducing setup time by **40%**.
+
+---
+
+## **EDUCATION**
+
+**MCA – Ranibai Agnihotri College of Engineering**
+📍 Chennai | 🎓 CGPA: 8.0 | 📅 2020 – 2022
+
+---
+
+## **KEY IMPACT**
+
+* ⚡ **40–70% performance improvement** in big data pipelines
+* 💰 **30% cloud cost optimization**
+* 🤖 **80% automation of data workflows**
+* ✅ **99.9% data accuracy & data quality assurance**
+* 🔄 **25+ ETL pipelines modernized to Azure cloud**
+
+---
+
+## **ATS KEYWORDS (TARGETED MATCH)**
+
+Azure Data Engineer, Azure Data Factory (ADF), Azure Databricks, PySpark, Apache Spark, Delta Lake, Data Lakehouse, ADLS Gen2, ETL Pipelines, ELT Pipelines, Data Warehousing, Data Modeling, Big Data, Distributed Systems, Data Engineering, Workflow Orchestration, Airflow, Databricks Workflows, REST API Ingestion, Performance Optimization, Spark Optimization, Partitioning, Broadcast Join, CI/CD, Azure DevOps, Data Governance, Unity Catalog, RBAC, Schema Evolution, Z-ORDER, Cloud Migration, Informatica, DataStage
+
+---
+*********************************************
+
+**ANAND KOYALMUDI**
+📧 [anandkoyalmudi424@gmail.com](mailto:anandkoyalmudi424@gmail.com) | 📞 +91-9145331326
+
+---
+
+## **AZURE DATA ENGINEER | 3+ YEARS EXPERIENCE**
+
+Azure Data Engineer with 3+ years of experience building scalable data platforms using **Azure Data Factory, Azure Databricks, PySpark, and Delta Lake**. Specialized in **modernizing legacy ETL systems** into distributed architectures by applying **Spark optimization, metadata-driven pipelines, and lakehouse design patterns**, consistently delivering **measurable gains in performance, cost, and reliability**.
+
+---
+
+## **TECHNICAL SKILLS**
+
+Python, SQL, PySpark, Apache Spark
+Azure Data Factory (ADF), Azure Databricks, ADLS Gen2, Azure SQL
+Delta Lake, Data Lakehouse, Medallion Architecture
+ETL/ELT, Data Warehousing, Dimensional Modeling
+Airflow, Databricks Workflows, CI/CD, Azure DevOps, GitHub
+Unity Catalog, RBAC, Data Governance
+
+---
+
+## **PROFESSIONAL EXPERIENCE**
+
+### **Data Engineer | DataSwitch**
+
+📅 Jun 2023 – Present
+
+* Migrated **25+ legacy ETL pipelines (Informatica/DataStage)** to **Azure Databricks (PySpark)** by replacing sequential transformations with distributed Spark jobs, reducing **average pipeline runtime from ~2.5 hours to ~1.5 hours (~40%)** and eliminating dependency on legacy schedulers.
+
+* Re-engineered heavy join and aggregation workloads using **partitioning on high-cardinality keys, broadcast joins for small lookup tables, and caching of reused DataFrames**, reducing **shuffle operations and improving processing time by ~60% on large datasets (>100M records)**.
+
+* Designed **Medallion Architecture (Bronze-Silver-Gold)** on **ADLS Gen2 with Delta Lake**, separating raw, cleaned, and curated layers, which reduced **data inconsistencies and reprocessing effort by enabling incremental loads instead of full refreshes**.
+
+* Built **ADF-driven orchestration framework** with **parameterized pipelines, metadata tables, and dynamic ForEach execution**, reducing **manual pipeline creation and operational overhead by ~80%** when onboarding new datasets.
+
+* Improved query performance by **35–71%** by applying **Delta Lake OPTIMIZE and Z-ORDER on frequently filtered columns**, along with **file compaction to address small file issues impacting Spark scan efficiency**.
+
+* Integrated **ADF with Databricks Jobs** using structured logging and retry policies, which reduced **pipeline failure rates by ~50% by handling transient failures and improving observability**.
+
+* Developed **data validation framework** with row-count checks, null validations, and reconciliation logic between source and target, ensuring **~99.9% data accuracy and significantly reducing production data issues**.
+
+* Reduced **cloud compute costs by ~30%** by tuning **cluster configurations (auto-scaling, right-sizing nodes)** and optimizing Spark jobs to minimize unnecessary recomputation and memory usage.
+
+* Implemented **Unity Catalog with RBAC policies**, enabling **centralized access control, auditability, and data lineage tracking**, improving compliance and reducing unauthorized access risks.
+
+---
+
+### **Data Engineer Intern | Revature**
+
+📅 Jan 2023 – May 2023
+
+* Built **ADF pipelines to ingest REST API data (GitHub)** into **ADLS Gen2**, implementing **incremental load logic and parameterized datasets**, which eliminated repetitive pipeline duplication.
+
+* Developed **metadata-driven ingestion framework using JSON configurations and ForEach loops**, allowing onboarding of **multiple datasets with minimal code changes**, improving scalability and reducing development time.
+
+* Orchestrated **Databricks notebooks using workflows and widgets**, enabling **dynamic parameter passing and dependency handling**, reducing **pipeline setup and testing time by ~40%**.
+
+---
+
+## **EDUCATION**
+
+**MCA – Ranibai Agnihotri College of Engineering**
+📍 Chennai | 🎓 CGPA: 8.0 | 📅 2020 – 2022
+
+---
+
+## **KEY IMPACT (WITH CONTEXT)**
+
+* ⚡ **~40% runtime reduction** → achieved by converting sequential ETL into distributed Spark execution
+* 🚀 **~60% faster processing** → reduced shuffle via partitioning + broadcast joins on large datasets
+* 💰 **~30% cost savings** → cluster tuning + eliminating redundant computations
+* 🤖 **~80% automation** → metadata-driven ADF pipelines replacing manual pipeline creation
+* ✅ **~99.9% data accuracy** → validation + reconciliation framework across pipeline stages
+
+---
+**ANAND KOYALMUDI**
+📧 [anandkoyalmudi424@gmail.com](mailto:anandkoyalmudi424@gmail.com) | 📞 +91-9145331326
+
+---
+
+## **AZURE DATA ENGINEER | 3+ YEARS EXPERIENCE**
+
+Azure Data Engineer with 3+ years of experience working on **Azure Data Factory, Azure Databricks, PySpark, and Delta Lake**. Hands-on experience in **modernizing legacy ETL systems (Informatica/DataStage)** into scalable data pipelines and improving performance through **Spark optimizations, better data modeling, and efficient orchestration**.
+
+---
+
+## **TECHNICAL SKILLS**
+
+Python, SQL, PySpark, Apache Spark
+Azure Data Factory (ADF), Azure Databricks, ADLS Gen2, Azure SQL
+Delta Lake, Medallion Architecture (Bronze-Silver-Gold)
+ETL/ELT Pipelines, Data Warehousing, Dimensional Modeling
+Databricks Workflows, Airflow, Azure DevOps, GitHub
+Unity Catalog, RBAC, Data Governance
+
+---
+
+## **PROFESSIONAL EXPERIENCE**
+
+### **Data Engineer | DataSwitch**
+
+📅 Jun 2023 – Present
+
+* Migrated legacy ETL workflows from **Informatica and DataStage to Azure Databricks (PySpark)**, replacing sequential processing with distributed execution and improving overall pipeline efficiency.
+
+* Optimized existing PySpark jobs by applying **partitioning, broadcast joins, and caching**, which reduced unnecessary data shuffling and noticeably improved execution time for large datasets.
+
+* Redesigned data flow using **Medallion Architecture (Bronze, Silver, Gold)** on ADLS Gen2, making pipelines easier to manage and reducing repeated reprocessing of raw data.
+
+* Built and maintained **ADF pipelines with parameterization and dynamic execution**, making it easier to onboard new datasets without duplicating pipelines.
+
+* Improved query performance in Delta tables by using **OPTIMIZE and Z-ORDER**, along with managing small file issues through compaction.
+
+* Integrated **ADF with Databricks Jobs** for better orchestration, adding retry mechanisms and logging, which made pipelines more stable and easier to monitor.
+
+* Worked on **data validation checks (row counts, null checks, reconciliation)** to ensure data consistency between source and target systems.
+
+* Tuned Spark jobs and cluster configurations to improve resource utilization and reduce unnecessary compute usage.
+
+* Implemented **Unity Catalog and access controls**, helping standardize data access and improve governance across teams.
+
+---
+
+### **Data Engineer Intern | Revature**
+
+📅 Jan 2023 – May 2023
+
+* Built **ADF pipelines to ingest data from REST APIs (GitHub)** into ADLS Gen2, handling authentication and incremental data loads.
+
+* Created **parameterized and reusable pipelines using JSON configurations and ForEach activities**, making ingestion scalable for multiple datasets.
+
+* Orchestrated **Databricks notebooks using workflows and widgets**, enabling dynamic execution and better dependency handling.
+
+---
+
+## **EDUCATION**
+
+**MCA – Ranibai Agnihotri College of Engineering**
+📍 Chennai | 🎓 CGPA: 8.0 | 📅 2020 – 2022
+
+---
+
+## **KEY STRENGTHS**
+
+* Strong understanding of **Spark performance tuning and distributed data processing**
+* Experience in **modernizing legacy ETL to cloud-native architectures**
+* Hands-on with **ADF orchestration and scalable pipeline design**
+* Focus on **writing maintainable, reusable, and production-ready data pipelines**
+
+---
+
+
+
+
+ 

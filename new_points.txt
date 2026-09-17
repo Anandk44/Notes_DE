@@ -1,0 +1,14 @@
+Current Bullet: "Migrated legacy Datastage sequences to Azure Databricks...".Revised Suggestion: "Architected the migration of complex DataStage sequences into Airflow DAGs, implementing parallel task execution and dependency management to modernize legacy scheduling."
+
+Engineered end-to-end migration patterns for on-premise Oracle and MS SQL Server databases into Azure Data Lake (ADLS), replacing legacy Informatica and DataStage jobs with optimized PySpark notebooks
+
+Developed scalable data ingestion pipelines using ADF to move raw on-prem data to ADLS, utilizing Databricks for complex business logic transformations and ADF Activity for modular orchestration.
+
+Data Engineer with 3+ years of experience specializing in on-prem to cloud migrations. Expert in converting legacy ETL logic (Informatica/DataStage) into modern PySpark, Airflow, and Databricks workflows.
+
+Orchestration: Azure Data Factory (ADF), Airflow.
+
+
+Legacy Systems: Informatica PowerCenter, IBM DataStage.
+
+(SELECT MAX(D_SRCE_UPD) D_SRCE_ADD FROM N_DB_APP_EDW_DEV.SCM.DLRCRDT_DEALERBANK)
