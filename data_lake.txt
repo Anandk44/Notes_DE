@@ -243,3 +243,6 @@ df.groupBy("cust").agg("count(*)").alias(
 
 whenever a file is updated , new deletion file is created and an parquet file woth the latest updates.
 It follows delete + update 
+
+
+databricks with the help of delta lake provide us the solution of data lakehouse
