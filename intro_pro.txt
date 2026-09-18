@@ -36,3 +36,5 @@ Executor Layer: Are tasks spilling to disk? Is memory sufficient? Are cores idle
 Shuffle Layer: Can I reduce or eliminate shuffle using broadcast joins, map-side aggregation, better partitioning, or bucketing?
 
 This layered way of thinking is how experienced Spark engineers diagnose performance problems.
+
+Want to crack DE jobs
