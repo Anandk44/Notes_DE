@@ -2,6 +2,8 @@ Question 16: How do you implement retry logic in ADF?
 Good 👍 — you got the idea, but this is too short for interview.
 Let’s make it clear, specific, and strong.
 
+
+retry in adf
 ❌ What’s Missing
 
 You said:
@@ -9,7 +11,7 @@ You said:
 “by adding retry”
 
 👉 Interviewer expects:
-
+git
 Where?
 How many retries?
 What about failures after retries?
